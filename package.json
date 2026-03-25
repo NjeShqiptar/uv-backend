@@ -1,13 +1,13 @@
 {
-  "name": "uv-bare-server",
+  "name": "uv-wisp-server",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "@tomphttp/bare-server-node": "^2.0.1",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "@ultraviolet/wisp": "^2.0.0"
   }
 }
