@@ -1,28 +1,27 @@
 import express from 'express';
-import { createServer } from 'node:http';
-import { createBareServer } from '@tomphttp/bare-server-node';
+import http from 'node:http';
+import { createWispServer } from '@ultraviolet/wisp';
 
-const bare = createBareServer('/bare/');
 const app = express();
-const server = createServer();
+const server = http.createServer(app);
 
+// Serve static files if needed
+app.use(express.static('public'));
+
+// Create Wisp server on /wisp
+const wisp = createWispServer({ prefix: '/wisp/' });
+
+// Handle WebSocket upgrades and requests
+server.on('upgrade', wisp.handleUpgrade.bind(wisp));
 server.on('request', (req, res) => {
-    if (bare.shouldRoute(req)) {
-        bare.routeRequest(req, res);
+    if (wisp.shouldRoute(req)) {
+        wisp.routeRequest(req, res);
     } else {
         app(req, res);
     }
 });
 
-server.on('upgrade', (req, socket, head) => {
-    if (bare.shouldRoute(req)) {
-        bare.routeUpgrade(req, socket, head);
-    } else {
-        socket.end();
-    }
-});
-
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Bare Server running on port ${PORT}`);
+    console.log(`Wisp Server running on port ${PORT}`);
 });
